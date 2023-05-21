@@ -31,6 +31,7 @@ print(f"Wasp bases: {wasp_bases}")
 
 # Wasp's bits are the actual bits of information she wants to send.
 # The bases determine the orientation that she'll use to encode these bits when she sends them over a quantum channel.
+
 # Define the quantum circuit
 backend = Aer.get_backend('qasm_simulator')
 antman_bits = []
