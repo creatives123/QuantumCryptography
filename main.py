@@ -31,39 +31,47 @@ print(f"Wasp bases: {wasp_bases}")
 
 # Wasp's bits are the actual bits of information she wants to send.
 # The bases determine the orientation that she'll use to encode these bits when she sends them over a quantum channel.
-
 # Define the quantum circuit
-circ = QuantumCircuit(qreg, creg)
+backend = Aer.get_backend('qasm_simulator')
+antman_bits = []
+antman_bases = []  # Here's the change
 for i in range(key_length):
+    # Define the quantum register
+    qreg = QuantumRegister(1)
+    # Define the classical register
+    creg = ClassicalRegister(1)
+    # Define the quantum circuit
+    circ = QuantumCircuit(qreg, creg)
+
+    # Wasp prepares qubits
+    print(Fore.GREEN + "\nPasso 2: Wasp prepara os seus qubits com base nos seus bits e bases." + Style.RESET_ALL)
+    print("Ela prepara cada qubit em uma superposição de estados de acordo com os seus bits e bases.")
     if wasp_bits[i] == 1:
         circ.x(qreg[0])
     if wasp_bases[i] == 1:
         circ.h(qreg[0])
 
-print(Fore.GREEN + "\nPasso 2: Wasp prepara os seus qubits com base nos seus bits e bases." + Style.RESET_ALL)
-print("Ela prepara cada qubit em uma superposição de estados de acordo com os seus bits e bases.")
+    # Ant-Man prepares bases
+    print(Fore.GREEN + "\nPasso 3: Ant-Man gera as suas bases aleatórias" + Style.RESET_ALL)
+    antman_base = random.randint(0, 1)
+    antman_bases.append(antman_base)  # Here's the change
+    print(f"Ant-Man's base for qubit {i}: {antman_base}")
 
-print(Fore.GREEN + "\nPasso 3: Ant-Man gera as suas bases aleatórias" + Style.RESET_ALL)
-
-# Ant-Man prepares a string of random bits that will determine how he measures the qubits Wasp sends.
-
-# Ant-Man measures qubits
-antman_bases = [random.randint(0,1) for _ in range(key_length)]
-print(f"Ant-Man's bases: {antman_bases}")
-
-for i in range(key_length):
-    if antman_bases[i] == 1:
+    # Ant-Man measures qubits
+    print(Fore.GREEN + "\nPasso 4: Ant-Man mede os qubits da Vespa usando as suas bases" + Style.RESET_ALL)
+    print("Ant-Man mede cada qubit usando as suas bases.")
+    if antman_base == 1:
         circ.h(qreg[0])
     circ.measure(qreg[0], creg[0])
 
-print(Fore.GREEN + "\nPasso 4: Ant-Man mede os qubits da Vespa usando as suas bases" + Style.RESET_ALL)
-print("Ant-Man mede cada qubit usando as suas bases.")
+    # Execute the circuit
+    job = execute(circ, backend, shots=1)
+    result = job.result()
+    counts = result.get_counts(circ)
+    antman_bits.append(int(next(iter(counts))))
 
-# Execute the circuit
-backend = Aer.get_backend('qasm_simulator')
-job = execute(circ, backend, shots=key_length)
-result = job.result()
-counts = result.get_counts(circ)
+print(f"Ant-Man bits: {antman_bits}")
+print(f"Ant-Man bases: {antman_bases}")
 
 print(Fore.GREEN + "\nPasso 5: Ant-Man mede os qubits" + Style.RESET_ALL)
 print("Ele obtém uma sequência de bits como resultado dessas medições.")
