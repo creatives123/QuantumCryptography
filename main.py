@@ -71,6 +71,7 @@ for i in range(key_length):
     counts = result.get_counts(circ)
     antman_bits.append(int(next(iter(counts))))
 
+
 print(f"Ant-Man bits: {antman_bits}")
 print(f"Ant-Man bases: {antman_bases}")
 
